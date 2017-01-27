@@ -16,6 +16,7 @@ if len(sys.argv)<3:
 query_cbor=sys.argv[1]
 train_out=sys.argv[2]
 test_out=sys.argv[3]
+max_entries=int(sys.argv[4])
 
 
 print("loading queries from ", query_cbor)
@@ -47,7 +48,7 @@ with open(train_out, 'w') as train_writer:
 
 
         with open(query_cbor, 'rb') as f:
-            for page in itertools.islice(iter_annotations(f), 0, 10):
+            for page in itertools.islice(iter_annotations(f), 0, max_entries):
                 paras = list([(tuple(sectionpath), sectionNames, para) for (sectionpath, sectionNames, para) in flatten_paras_with_section_path(page)])
 
                 if len(paras)>1:
