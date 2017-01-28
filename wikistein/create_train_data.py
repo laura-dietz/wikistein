@@ -76,7 +76,7 @@ def main():
     args = parser.parse_args()
 
     print("loading queries from ", args.query_cbor.name)
-    write_output(args.query_reader, args.train_writer, args.test_writer, args.max_entries)
+    write_output(args.query_cbor, args.train, args.test, args.maxentries)
 
 if __name__ == '__main__':
     main()
