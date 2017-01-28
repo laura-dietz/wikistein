@@ -62,22 +62,21 @@ def write_output(query_reader, train_writer, test_writer, max_entries = None):
                                     , str(1) if trueSectionPath == sectionPath else str(0)
                                     ])+"\n")
 
+description = """
+Glue code for TREC CAR and the Duet Model
+"""
+
 def main():
-    if len(sys.argv)<3:
-        print("usage ",sys.argv[0]," cbor train_out test_out")
-        exit()
+    import argparse
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('query_cbor', type=argparse.FileType('rb'), help='Input cbor file')
+    parser.add_argument('train', type=argparse.FileType('w'), help='Output path for training data')
+    parser.add_argument('test', type=argparse.FileType('w'), help='Output path for test data')
+    parser.add_argument('--maxentries', type=int, help='max number of articles to include')
+    args = parser.parse_args()
 
-    query_cbor=sys.argv[1]
-    train_out=sys.argv[2]
-    test_out=sys.argv[3]
-    max_entries=int(sys.argv[4])
-
-    print("loading queries from ", query_cbor)
-
-    with open(train_out, 'w') as train_writer:
-        with open(test_out, 'w') as test_writer:
-            with open(query_cbor, 'rb') as query_reader:
-                write_output(query_reader, train_writer, test_writer, max_entries)
+    print("loading queries from ", args.query_cbor.name)
+    write_output(args.query_reader, args.train_writer, args.test_writer, args.max_entries)
 
 if __name__ == '__main__':
     main()
