@@ -11,5 +11,6 @@ fi
 
 cd wikistein
 python setup.py install
+cd ..
 
-wikistein-create ../data/spritzer.cbor  bla bla2
+wikistein-create data/spritzer.cbor  bla bla2
