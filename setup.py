@@ -15,5 +15,6 @@ setup(
     author='laura-dietz',
     author_email='Laura.Dietz@unh.edu',
     description='Interface between the duet model and trec-car-tools',
-    install_requires=['trec_car>=1.4'],
+    #install_requires=['trec_car>=1.4'],
+    dependency_links=['git+https://github.com/TREMA-UNH/trec-car-tools.git']
 )
