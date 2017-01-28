@@ -1,0 +1,6 @@
+Usage:
+
+        git clone https://github.com/laura-dietz/wikistein.git
+        cd wikistein
+        python setup.py install
+        bash run.sh
