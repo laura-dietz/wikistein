@@ -12,6 +12,7 @@ fi
 
 if [[ -d wikistein ]]; then
     cd wikistein; git pull; cd ..
+    echo "warning: if git pull obtained a new version of this script, you need to run it again."
 else
     git clone https://github.com/laura-dietz/wikistein.git
 fi
@@ -32,3 +33,6 @@ wikistein-mock-rank  data/${subset}.train data/${subset}.test data/${subset}.run
 
 echo "Evaluating"
 wikistein-eval data/${qrels} data/${subset}.run
+
+
+echo "warning: if git pull obtained a new version of this script, you need to run it again."
