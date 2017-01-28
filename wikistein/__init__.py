@@ -2,4 +2,4 @@
 
 __version__ = 1.0
 
-__all__ = ['create_train_data']
+__all__ = ['create_train_data', 'mock_rankings', 'simple_eval']

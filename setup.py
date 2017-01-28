@@ -9,6 +9,7 @@ setup(
         'console_scripts': [
             'wikistein-create = wikistein.create_train_data:main',
             'wikistein-mock-rank = wikistein.mock_rankings:main',
+            'wikistein-eval = wikistein.simple_eval:main',
         ]
     },
     url='http://trec-car.cs.unh.edu/',

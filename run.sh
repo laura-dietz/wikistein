@@ -3,6 +3,7 @@
 dataset="spritzer"
 subset="spritzer"
 version="1.4"
+qrels="${subset}.cbor.hierarchical.qrels"
 
 if [[ ! -d data ]]; then
     wget http://trec-car.cs.unh.edu/datareleases/${dataset}-v${version}.zip
@@ -19,10 +20,15 @@ cd wikistein
 python setup.py install
 cd ..
 
+echo "preparing data"
 wikistein-create data/${subset}.cbor data/${subset}.train data/${subset}.test
 
+
+
+echo "TREC CAR data is ready, run duet model NOW!"
+
+echo "(Faking rankings for now)"
 wikistein-mock-rank  data/${subset}.train data/${subset}.test data/${subset}.run
 
-
-echo "TREC CAR data is ready, run duet model!"
-
+echo "Evaluating"
+wikistein-eval data/${qrels} data/${subset}.run
