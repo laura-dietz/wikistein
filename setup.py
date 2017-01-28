@@ -5,10 +5,15 @@ setup(
     name='wikistein',
     version='1.0',
     packages=['wikistein'],
-    url='trec-car.cs.unh.edu',
+    entry_points={
+        'console_scripts': [
+            'wikistein-create = wikistein.create_train_data:main',
+        ]
+    },
+    url='http://trec-car.cs.unh.edu/',
     license='BSD 3-Clause',
     author='laura-dietz',
     author_email='Laura.Dietz@unh.edu',
-    description='Interface between wikistein and trec-car-tools',
-    install_requires=['cbor>=0.1.4', 'trec_car'],
+    description='Interface between the duet model and trec-car-tools',
+    install_requires=['trec_car>=1.4'],
 )
