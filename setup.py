@@ -8,6 +8,7 @@ setup(
     entry_points={
         'console_scripts': [
             'wikistein-create = wikistein.create_train_data:main',
+            'wikistein-mock-rank = wikistein.mock_rankings:main',
         ]
     },
     url='http://trec-car.cs.unh.edu/',

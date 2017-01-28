@@ -19,7 +19,10 @@ cd wikistein
 python setup.py install
 cd ..
 
-wikistein-create data/${subset}.cbor ${subset}.train ${subset}.test
+wikistein-create data/${subset}.cbor data/${subset}.train data/${subset}.test
+
+wikistein-mock-rank  data/${subset}.train data/${subset}.test data/${subset}.run
+
 
 echo "TREC CAR data is ready, run duet model!"
 

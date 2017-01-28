@@ -61,6 +61,8 @@ def write_output(query_reader, train_writer, test_writer, max_entries = None):
                                     , paragraph.get_text()
                                     , str(1) if trueSectionPath == sectionPath else str(0)
                                     ])+"\n")
+    train_writer.close()
+    test_writer.close()
 
 description = """
 Glue code for TREC CAR and the Duet Model
