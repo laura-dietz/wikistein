@@ -43,8 +43,9 @@ def load_input(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     # return groupby(testdata, key=lambda elem: elem.sectionId)
 #
 # def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
-#     testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
-    for key, elems_ in chunk_by(testdata, key=lambda elem: elem.sectionId): #testdata:
+    testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
+#     for key, elems_ in chunk_by(testdata, key=lambda elem: elem.sectionId): #testdata:
+    for key, elems_ in testdata:
         print("mock ranking:", key)
         elems = list(elems_)
         shuffle(elems)
