@@ -30,6 +30,7 @@ def load_input(testFile, maxentries=None) -> Dict[str, List[Elem]]:
 
 def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
     for key, elems_ in testdata:
+        print("mock ranking:", key)
         elems = list(elems_)
         shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
