@@ -25,11 +25,11 @@ def parse_test(line:str) -> Elem:
     return Elem(sectionId, query, paraId, paraText, rel)
 
 def load_input(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
-    testdata = [parse_test(line) for line in itertools.islice(testFile, 0, maxentries)]
+    testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
     # return groupby(testdata, key=lambda elem: elem.sectionId)
 #
 # def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
-    testdata = groupby(testdata, key=lambda elem: elem.sectionId)
+    testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         print("mock ranking:", key)
         elems = list(elems_)
