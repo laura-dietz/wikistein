@@ -24,7 +24,7 @@ def parse_test(line:str) -> Elem:
     rel = int(splits[4])
     return Elem(sectionId, query, paraId, paraText, rel)
 
-def load_input(testFile, maxentries=None, runwriter):# -> Dict[str, List[Elem]]:
+def load_input(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = [parse_test(line) for line in itertools.islice(testFile, 0, maxentries)]
     # return groupby(testdata, key=lambda elem: elem.sectionId)
 #
@@ -49,7 +49,7 @@ def main():
     args = parser.parse_args()
 
     # testdata =\
-    load_input (args.test, args.maxentries, args.run)
+    load_input (args.test, args.run, args.maxentries)
     # write_mock_rankings(testdata, args.run)
 
 
