@@ -1,6 +1,6 @@
 from itertools import groupby
 from random import shuffle
-from typing import List, Dict
+from typing import List, Dict, Iterator
 
 import itertools
 
@@ -24,13 +24,27 @@ def parse_test(line:str) -> Elem:
     rel = int(splits[4])
     return Elem(sectionId, query, paraId, paraText, rel)
 
+def chunk_by(data:Iterator[Elem], key):
+    metakey = None
+    chunk = []
+    for elem in data:
+        thiskey = key(elem)
+        if not metakey or thiskey != metakey:
+            if len(chunk)>0:
+                yield (thiskey, chunk)
+            metakey = thiskey
+            chunk = []
+        else:
+            chunk.append(elem)
+    yield (metakey, chunk)
+
 def load_input(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
     # return groupby(testdata, key=lambda elem: elem.sectionId)
 #
 # def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
 #     testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
-    for key, elems_ in itertools.groupby(testdata, key=lambda elem: elem.sectionId): #testdata:
+    for key, elems_ in chunk_by(testdata, key=lambda elem: elem.sectionId): #testdata:
         print("mock ranking:", key)
         elems = list(elems_)
         shuffle(elems)
