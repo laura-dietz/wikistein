@@ -1,6 +1,5 @@
-from itertools import groupby
 from random import shuffle
-from typing import List, Dict, Iterator
+from typing import Iterator
 
 import itertools
 
@@ -24,7 +23,9 @@ def parse_test(line:str) -> Elem:
     rel = int(splits[4])
     return Elem(sectionId, query, paraId, paraText, rel)
 
+
 def chunk_by(data:Iterator[Elem], key):
+    """ If you don't trust itertools groupby to do things in a streaming fashion, this one will. """
     metakey = None
     chunk = []
     for elem in data:
@@ -38,15 +39,11 @@ def chunk_by(data:Iterator[Elem], key):
             chunk.append(elem)
     yield (metakey, chunk)
 
-def load_input(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
+def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
-    # return groupby(testdata, key=lambda elem: elem.sectionId)
-#
-# def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
     testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
-#     for key, elems_ in chunk_by(testdata, key=lambda elem: elem.sectionId): #testdata:
     for key, elems_ in testdata:
-        print("mock ranking:", key)
+        # print("mock ranking:", key)
         elems = list(elems_)
         shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
@@ -63,9 +60,7 @@ def main():
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     args = parser.parse_args()
 
-    # testdata =\
-    load_input (args.test, args.run, args.maxentries)
-    # write_mock_rankings(testdata, args.run)
+    write_mock_rankings (args.test, args.run, args.maxentries)
 
 
 if __name__ == '__main__':

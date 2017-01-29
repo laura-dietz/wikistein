@@ -99,10 +99,11 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
             for sectionPath in sectionpaths:
                 sectionName = ' '.join(sectionpaths[sectionPath])
                 sectionId =  '/'.join(sectionPath)
+                queryTokenized = queryTokenize(sectionName)
 
                 for (trueSectionPath, tsn, paragraph) in paras:
                     test_writer.write("\t".join([sectionId
-                                    , queryTokenize(sectionName)
+                                    , queryTokenized
                                     , paragraph.para_id
                                     , cleanParagraphText(paragraph.get_text())
                                     , str(1) if trueSectionPath == sectionPath else str(0)
@@ -110,7 +111,7 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
 
                 for paragraph in randomparas:
                     test_writer.write("\t".join([sectionId
-                                    , queryTokenize(sectionName)
+                                    , queryTokenized
                                     , paragraph.para_id
                                     , cleanParagraphText(paragraph.get_text())
                                     , str(0)

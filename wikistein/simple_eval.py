@@ -103,7 +103,6 @@ def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[Wi
         return 1.0*hits/5
 
     def aveprec(ranking:List[WithTruth], num_truths)->float:
-        print()
         hits = 0
         sumscore = 0.0
         for elem in ranking:
