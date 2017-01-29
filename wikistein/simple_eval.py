@@ -42,7 +42,7 @@ class WithTruth():
 
 
 def parse_rankelem(line:str) -> RankElem:
-    splits = line.split("\t")
+    splits = line.split(" ")
     return RankElem(splits[0], splits[2], int(splits[3]), float(splits[4]), "")
 
 def addTruth(qrels:QrelCollection, elem:RankElem)-> WithTruth :
@@ -119,7 +119,7 @@ def perform_evaluation(qrels, run):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="Mock  dont use")
+    parser = argparse.ArgumentParser(description="Mock  dont use for anything but testing")
     parser.add_argument('qrels', type=argparse.FileType('r'), help='Input path for qrels (ground truth)')
     parser.add_argument('run', type=argparse.FileType('r'), help='Input path for run files')
     args = parser.parse_args()

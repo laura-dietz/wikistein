@@ -2,7 +2,6 @@ from typing import List
 
 from trec_car.read_data import *
 import itertools
-import sys
 import random
 import string
 
@@ -36,46 +35,21 @@ def keyfun(sectionpath, paraid)->str :
 def write_output(query_reader, train_writer, test_writer, max_entries = None):
     for page in itertools.islice(iter_annotations(query_reader), 0, max_entries):
         parasDict = {keyfun(sectionpath, para.para_id): (tuple(sectionpath), sectionNames, para) for (sectionpath, sectionNames, para) in flatten_paras_with_section_path(page)}
-        # print (parasDict)
-
-        # for key in parasDict:
-        #     paras = parasDict[key]
-        #     paraids_ = {}
-        #     sectionpaths = {sectionpath: sectionnames for (sectionpath, sectionnames, p) in paras}
-        #     for (trueSectionPath, sectionPathName, paragraph) in paras:
-        #         sectionName = ' '.join(sectionpaths[trueSectionPath])
-        #
-        #         if(paragraph.para_id in paraids_):
-        #             print("warning: duplicate paragraph in article "+sectionName+": "+ paragraph.para_id)
-        #             print(paragraph.para_id, "\t", paragraph.get_text())
-        #
-        #         paraids_ = paragraph.para_id
 
         paras = list(parasDict.values())   # discard duplicate paragraph ids
 
-
-
-
         if len(paras)>1:
             sectionpaths = {sectionpath: sectionnames for (sectionpath, sectionnames, p) in paras}
-            # train data
 
-            paraids_ = {}
-            print ("   ")
+            # train data
             for (trueSectionPath, sectionPathName, paragraph) in paras:
                 sectionName = ' '.join(sectionpaths[trueSectionPath])
-
-
-
-
                 negatives = [p.get_text() for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
                 if len(negatives) >= 4:
                     random.shuffle(negatives)
-
                     train_writer.write("\t".join([ queryTokenize(sectionName)
                                     , paragraph.get_text()
                                     ]+negatives[0:4]) + "\n")
-
 
             # test data
             random.shuffle(paras)

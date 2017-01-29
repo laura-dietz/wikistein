@@ -4,7 +4,7 @@ from typing import List, Dict
 
 import itertools
 
-columndelim='\t' # for trec_eval set to space; for TSV set to tab
+columndelim=' ' # for trec_eval set to space; for TSV set to tab
 
 class Elem():
     def __init__(self, sectionId, query, paraId, paraText, rel):
