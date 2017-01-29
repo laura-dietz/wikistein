@@ -28,17 +28,35 @@ def flatten_paras_with_section_path(page:Page):
 def queryTokenize(text:str):
     return ''.join([ c  if str(c).isalnum() else ' ' for c in text if c.isprintable()])
 
+def keyfun(sectionpath, paraid)->str :
+   key= paraid+str(tuple(sectionpath))
+   print(key)
+   return key
 
 def write_output(query_reader, train_writer, test_writer, max_entries = None):
     for page in itertools.islice(iter_annotations(query_reader), 0, max_entries):
-        paras = list([(tuple(sectionpath), sectionNames, para) for (sectionpath, sectionNames, para) in flatten_paras_with_section_path(page)])
+        parasDict = {keyfun(sectionpath, para.para_id): (tuple(sectionpath), sectionNames, para) for (sectionpath, sectionNames, para) in flatten_paras_with_section_path(page)}
+        # print (parasDict)
+        paras = list(parasDict.values())   # discard duplicate paragraph ids
 
-        if len(paras)>1:
+        # if(paragraph.para_id not in paraids_):
+        #     print("warning: duplicate paragraph in article "+sectionName+": "+ paragraph.para_id)
+        #     print(paragraph.para_id, "\t", paragraph.get_text())
+        #
+
+
+    if len(paras)>1:
             sectionpaths = {sectionpath: sectionnames for (sectionpath, sectionnames, p) in paras}
             # train data
 
+            paraids_ = {}
+            print ("   ")
             for (trueSectionPath, sectionPathName, paragraph) in paras:
                 sectionName = ' '.join(sectionpaths[trueSectionPath])
+
+
+
+
                 negatives = [p.get_text() for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
                 if len(negatives) >= 4:
                     random.shuffle(negatives)
