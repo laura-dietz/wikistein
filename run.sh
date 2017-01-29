@@ -19,7 +19,7 @@ fi
 
 
 echo "preparing data"
-wikistein-create data/${subset}.cbor data/${subset}.train data/${subset}.test
+wikistein-create data/${subset}.cbor data/${subset}.cbor.paragraphs data/${subset}.train data/${subset}.test
 
 
 
