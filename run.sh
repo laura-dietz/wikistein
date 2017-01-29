@@ -1,16 +1,23 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+
+set -e
 
 # git clone https://github.com/laura-dietz/wikistein.git
 # cd wikistein
 # python setup.py install
 # bash run.sh
 
-dataset="spritzer"
-subset="spritzer"
+#dataset="spritzer"
+#subset="spritzer"
+
+
+dataset="release"
+subset="release-v1.4/fold0.train"
+
 version="1.4"
 qrels="${subset}.cbor.hierarchical.qrels"
 
-if [[ ! -d data ]]; then
+if [[ ! -f ${dataset}-v${version}.zip ]]; then
     wget http://trec-car.cs.unh.edu/datareleases/${dataset}-v${version}.zip
     unzip ${dataset}-v${version}.zip -d data
 fi
