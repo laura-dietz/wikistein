@@ -24,11 +24,12 @@ def parse_test(line:str) -> Elem:
     rel = int(splits[4])
     return Elem(sectionId, query, paraId, paraText, rel)
 
-def load_input(testFile, maxentries=None) -> Dict[str, List[Elem]]:
+def load_input(testFile, maxentries=None, runwriter):# -> Dict[str, List[Elem]]:
     testdata = [parse_test(line) for line in itertools.islice(testFile, 0, maxentries)]
-    return groupby(testdata, key=lambda elem: elem.sectionId)
-
-def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
+    # return groupby(testdata, key=lambda elem: elem.sectionId)
+#
+# def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
+    testdata = groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         print("mock ranking:", key)
         elems = list(elems_)
@@ -47,8 +48,9 @@ def main():
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     args = parser.parse_args()
 
-    testdata =load_input (args.test, args.maxentries)
-    write_mock_rankings(testdata, args.run)
+    # testdata =\
+    load_input (args.test, args.maxentries, args.run)
+    # write_mock_rankings(testdata, args.run)
 
 
 if __name__ == '__main__':
