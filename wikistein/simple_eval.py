@@ -67,8 +67,8 @@ class Eval():
         return  "Eval(mrr="+str(self.mrr)+", p@5="+str(self.p5)+", map="+str(self.aveprec)+")"
 
 
-def average_eval(evals: List[Eval])->Eval:
-    norm = 1.0/len(evals)
+def average_eval(evals: List[Eval], numQueries:int)->Eval:
+    norm = 1.0/numQueries
     return Eval(mrr = norm*sum([e.mrr for e in evals])
             ,   p5 = norm*sum([e.p5 for e in evals])
             ,   aveprec = norm*sum([e.aveprec for e in evals])
@@ -105,7 +105,9 @@ def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[Wi
 
     eval = {key: Eval(mrr = mrr(ranking), p5 = p5(ranking), aveprec = aveprec(ranking, numTruths(key)))
             for key, ranking in rankings}
-    avgeval = average_eval(list(eval.values()))
+
+    numQueries = len(qrelcollection)
+    avgeval = average_eval(list(eval.values()), numQueries)
 
     return (avgeval, eval)
 
