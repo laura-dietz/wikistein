@@ -4,7 +4,7 @@ from trec_car.read_data import *
 import itertools
 import random
 import string
-import re
+
 
 
 
@@ -35,9 +35,16 @@ def keyfun(sectionpath, paraid)->str :
    key= paraid+str(tuple(sectionpath))
    return key
 
-
+PUNKT = {'.',';','?','!','(',')','-','+','$','%','&','*','@','<','>','=','_','"'}
 def cleanParagraphText(text:str):
-    return text.replace("[^A-Za-z01-9\.,;?\(\)-\/]"," ").replace("[\s]+"," ")
+    global PUNKT
+    return ''.join([c
+             if str(c).isalpha() or str(c).isdigit() or c in PUNKT
+             else ' '
+             for c in text
+             if c.isprintable and c not in {'\n','\t','\''}])
+    # return text.replace("[^A-Za-z01-9\.,;?\(\)-\/]"," ").replace("\n","").replace("[\s]+"," ")
+
 
 def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max_entries = None):
 
