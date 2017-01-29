@@ -4,6 +4,7 @@ from typing import List, Dict
 
 import itertools
 
+columndelim=' ' # for TSV set to tab
 
 class Elem():
     def __init__(self, sectionId, query, paraId, paraText, rel):
@@ -32,7 +33,7 @@ def write_mock_rankings(testdata:Dict[str,List[Elem]], runwriter):
         elems = list(elems_)
         shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
-            line = "\t".join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
+            line = columndelim.join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
             runwriter.write(line + "\n")
     runwriter.close()
 
