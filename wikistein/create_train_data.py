@@ -37,7 +37,7 @@ def keyfun(sectionpath, paraid)->str :
 
 
 def cleanParagraphText(text:str):
-    return text.replace("[\s\S]+"," ")
+    return text.replace("[^A-Za-z01-9\.,;?\(\)-\/]"," ").replace("[\s]+"," ")
 
 def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max_entries = None):
 
