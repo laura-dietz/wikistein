@@ -4,13 +4,17 @@ from trec_car.read_data import *
 import itertools
 import random
 import string
+import re
+
+
+
 
 printable = set(string.printable)
 
 def flatten_paras_with_section_path(page:Page):
     def flatten_children(prefix: List[str], prefixName:List[str], skel:PageSkeleton):
         if isinstance(skel, Para):
-            if len(skel.paragraph.get_text())>10:
+            if len(cleanParagraphText(skel.paragraph.get_text()))>10:
                 yield (prefix, prefixName, skel.paragraph)
         elif isinstance(skel, Section):
             new_prefix = prefix + [skel.headingId]
@@ -30,6 +34,10 @@ def queryTokenize(text:str):
 def keyfun(sectionpath, paraid)->str :
    key= paraid+str(tuple(sectionpath))
    return key
+
+
+def cleanParagraphText(text:str):
+    return text.replace("[\s\S]+"," ")
 
 def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max_entries = None):
 
@@ -69,12 +77,12 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
             # train data
             for (trueSectionPath, sectionPathName, paragraph) in paras:
                 sectionName = ' '.join(sectionpaths[trueSectionPath])
-                negatives = [p.get_text() for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
-                randomparas = [p.get_text() for p in random_paras.get_k(4, paras_in_this_page) ]
+                negatives = [cleanParagraphText(p.get_text()) for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
+                randomparas = [cleanParagraphText(p.get_text()) for p in random_paras.get_k(4, paras_in_this_page) ]
                 if len(negatives) >= 4:
                     random.shuffle(negatives)
                     train_writer.write("\t".join([ queryTokenize(sectionName)
-                                    , paragraph.get_text()
+                                    , cleanParagraphText(paragraph.get_text())
                                     ]+negatives[0:4]+randomparas) + "\n")
 
             # test data
@@ -89,7 +97,7 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
                     test_writer.write("\t".join([sectionId
                                     , queryTokenize(sectionName)
                                     , paragraph.para_id
-                                    , paragraph.get_text()
+                                    , cleanParagraphText(paragraph.get_text())
                                     , str(1) if trueSectionPath == sectionPath else str(0)
                                     ])+"\n")
 
@@ -97,7 +105,7 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
                     test_writer.write("\t".join([sectionId
                                     , queryTokenize(sectionName)
                                     , paragraph.para_id
-                                    , paragraph.get_text()
+                                    , cleanParagraphText(paragraph.get_text())
                                     , str(0)
                                     ])+"\n")
     train_writer.close()
