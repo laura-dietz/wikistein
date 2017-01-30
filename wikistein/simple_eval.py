@@ -60,10 +60,6 @@ def addTruth(qrels:QrelCollection, elem:RankElem)-> WithTruth :
     is_truth = qrels.get(elem.sectionId, False).get(elem.paraId, False)
     return WithTruth(elem, is_truth)
 
-def load_rankings(qrelcollection, runreader) -> Dict[str, List[WithTruth]] :
-    rankdata = [addTruth(qrelcollection, parse_rankelem(line)) for line in runreader]
-    rankGrouped = groupby(rankdata, lambda elem: elem.elem.sectionId)
-    return rankGrouped
 
 
 #  ============================
@@ -85,8 +81,8 @@ def average_eval(evals: List[Eval], numQueries:int)->Eval:
             ,   aveprec = norm*sum([e.aveprec for e in evals])
             )
 
-
-def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[WithTruth]]):
+# ==============================
+def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, List[WithTruth]] :
     def mrr(ranking:List[WithTruth])->float:
         for elem in ranking:
             if elem.is_truth:
@@ -126,6 +122,12 @@ def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[Wi
                     mrr = mrr(ranking),
                     p5 = p5(ranking))
 
+    rankdata = (addTruth(qrelcollection, parse_rankelem(line)) for line in runreader)
+    rankings = itertools.groupby(rankdata, lambda elem: elem.elem.sectionId)
+    # return rankGrouped
+
+# def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[WithTruth]]):
+
 
     eval = {key: eval(key, ranking)   for key, ranking in rankings} # attention: this ranking is actually an iterator!!!
 
@@ -139,10 +141,10 @@ def perform_evaluation(qrels, run):
     qrelsCollection = load_qrels(qrels)
     print("...collecting qrels")
     print("loading rankings...")
-    rankingdata =load_rankings (qrelsCollection, run)
-    print("...loading rankings")
-    print("computing evaluation...")
-    return compute_evaluation(qrelsCollection, rankingdata)
+    return load_rankings_and_compute_eval (qrelsCollection, run)
+    # print("...loading rankings")
+    # print("computing evaluation...")
+    # return compute_evaluation(qrelsCollection, rankingdata)
 
 
 def main():
