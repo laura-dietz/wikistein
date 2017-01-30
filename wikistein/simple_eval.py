@@ -65,49 +65,61 @@ def addTruth(qrels:QrelCollection, elem:RankElem)-> WithTruth :
 #  ============================
 
 class Eval():
-    def __init__(self, mrr:float, p5:float, aveprec:float):
+    def __init__(self, mrr:float, p5:float, rprec:float, aveprec:float):
         self.mrr = mrr
         self.p5 = p5
+        self.rprec = rprec
         self.aveprec = aveprec
 
     def __str__(self, *args, **kwargs):
-        return  "Eval(mrr="+str(self.mrr)+", p@5="+str(self.p5)+", map="+str(self.aveprec)+")"
+        return  "Eval(mrr="+str(self.mrr)+", p@5="+str(self.p5)+", r-prec"+str(self.rprec)+", map="+str(self.aveprec)+")"
 
 
 def average_eval(evals: List[Eval], numQueries:int)->Eval:
     norm = 1.0/numQueries
     return Eval(mrr = norm*sum([e.mrr for e in evals])
             ,   p5 = norm*sum([e.p5 for e in evals])
+            ,   rprec = norm*sum([e.rprec for e in evals])
             ,   aveprec = norm*sum([e.aveprec for e in evals])
             )
 
 # ==============================
+
+def mrr(ranking:List[WithTruth])->float:
+    for elem in ranking:
+        if elem.is_truth:
+            # print('mrr found rank', elem.elem.rank)
+            return (1.0/ elem.elem.rank)
+    return 0.0
+
+def p_at_k(k:int, ranking:List[WithTruth])->float:
+    hits = 0
+    for elem in itertools.islice(ranking, 0, k):
+        if elem.is_truth:
+            # print('p5 found rank', elem.elem.rank)
+            hits += 1
+    return 1.0*hits/k
+
+def p5(ranking:List[WithTruth])->float:
+    return p_at_k(5, ranking)
+
+def r_precision(ranking:List[WithTruth], num_truths)->float:
+    return p_at_k( num_truths, ranking)
+
+
+
+def aveprec(ranking:List[WithTruth], num_truths)->float:
+    hits = 0
+    sumscore = 0.0
+    for elem in ranking:
+        if elem.is_truth:
+            hits +=1
+            sumscore += 1.0 * hits/ elem.elem.rank
+            # print( 'map fond at rank ',elem.elem.rank, ":  ", (1.0 * hits/ elem.elem.rank), "--> ",sumscore, "  -->  ", (sumscore/num_truths))
+    return sumscore / num_truths
+
+
 def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, List[WithTruth]] :
-    def mrr(ranking:List[WithTruth])->float:
-        for elem in ranking:
-            if elem.is_truth:
-                # print('mrr found rank', elem.elem.rank)
-                return (1.0/ elem.elem.rank)
-        return 0.0
-
-    def p5(ranking:List[WithTruth])->float:
-        hits = 0
-        for elem in itertools.islice(ranking, 0, 5):
-            if elem.is_truth:
-                # print('p5 found rank', elem.elem.rank)
-                hits += 1
-        return 1.0*hits/5
-
-    def aveprec(ranking:List[WithTruth], num_truths)->float:
-        hits = 0
-        sumscore = 0.0
-        for elem in ranking:
-            if elem.is_truth:
-                hits +=1
-                sumscore += 1.0 * hits/ elem.elem.rank
-                # print( 'map fond at rank ',elem.elem.rank, ":  ", (1.0 * hits/ elem.elem.rank), "--> ",sumscore, "  -->  ", (sumscore/num_truths))
-        return sumscore / num_truths
-
 
     def numTruths(sectionId):
         elemdict =  qrelcollection.get(sectionId, {})
@@ -116,32 +128,23 @@ def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, Lis
 
     def eval(sectionId, ranking:List[WithTruth])->Eval:
         ranking = list(ranking) # turn iterator into a list
-        num_truth = numTruths(sectionId)
-
-        return Eval(aveprec = aveprec(ranking, num_truths=num_truth),
+        num_truths = numTruths(sectionId)
+        return Eval(aveprec = aveprec(ranking, num_truths=num_truths),
                     mrr = mrr(ranking),
+                    rprec = r_precision(ranking, num_truths=num_truths),
                     p5 = p5(ranking))
 
     rankdata = (addTruth(qrelcollection, parse_rankelem(line)) for line in runreader)
     rankings = itertools.groupby(rankdata, lambda elem: elem.elem.sectionId)
-    # return rankGrouped
-
-# def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[WithTruth]]):
-
-
     eval = {key: eval(key, ranking)   for key, ranking in rankings} # attention: this ranking is actually an iterator!!!
 
     numQueries = len(qrelcollection)
     avgeval = average_eval(list(eval.values()), numQueries)
-
     return (avgeval, eval)
 
 def perform_evaluation(qrels, run):
     qrelsCollection = load_qrels(qrels)
     return load_rankings_and_compute_eval (qrelsCollection, run)
-    # print("...loading rankings")
-    # print("computing evaluation...")
-    # return compute_evaluation(qrelsCollection, rankingdata)
 
 
 def main():
@@ -149,13 +152,16 @@ def main():
     parser = argparse.ArgumentParser(description="Mock  dont use for anything but testing")
     parser.add_argument('qrels', type=argparse.FileType('r'), help='Input path for qrels (ground truth)')
     parser.add_argument('run', type=argparse.FileType('r'), help='Input path for run files')
+    parser.add_argument('--querybyquery', type=bool, help='Print query-by-query evaluation results')
     args = parser.parse_args()
     (avgeval, fulleval) = perform_evaluation(args.qrels, args.run)
     print (avgeval)
-    print("\n")
 
-    for sectionId, eval in fulleval.items():
-        print(sectionId,eval)
+    if(args.querybyquery):
+        print("\n")
+
+        for sectionId, eval in fulleval.items():
+            print(sectionId,eval)
 
 
 if __name__ == '__main__':
