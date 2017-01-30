@@ -137,10 +137,7 @@ def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, Lis
     return (avgeval, eval)
 
 def perform_evaluation(qrels, run):
-    print("collecting qrels...")
     qrelsCollection = load_qrels(qrels)
-    print("...collecting qrels")
-    print("loading rankings...")
     return load_rankings_and_compute_eval (qrelsCollection, run)
     # print("...loading rankings")
     # print("computing evaluation...")
@@ -157,8 +154,8 @@ def main():
     print (avgeval)
     print("\n")
 
-    # for sectionId, eval in fulleval.items():
-    #     print(sectionId,eval)
+    for sectionId, eval in fulleval.items():
+        print(sectionId,eval)
 
 
 if __name__ == '__main__':
