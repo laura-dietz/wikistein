@@ -135,8 +135,13 @@ def compute_evaluation(qrelcollection:QrelCollection, rankings:Dict[str, List[Wi
     return (avgeval, eval)
 
 def perform_evaluation(qrels, run):
+    print("collecting qrels...")
     qrelsCollection = load_qrels(qrels)
+    print("...collecting qrels")
+    print("loading rankings...")
     rankingdata =load_rankings (qrelsCollection, run)
+    print("...loading rankings")
+    print("computing evaluation...")
     return compute_evaluation(qrelsCollection, rankingdata)
 
 
