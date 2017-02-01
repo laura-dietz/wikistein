@@ -1,5 +1,10 @@
 Usage:
 
+        git clone https://github.com/TREMA-UNH/trec-car-tools.git
+        cd trec-car-tools/python3
+        python setup.py install
+        cd ../..
+
         git clone https://github.com/laura-dietz/wikistein.git
         cd wikistein
         python setup.py install
