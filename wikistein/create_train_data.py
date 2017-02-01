@@ -81,43 +81,45 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
         if len(paras)>1:
             sectionpaths = {sectionpath: sectionnames for (sectionpath, sectionnames, p) in paras}
 
-            # train data
-            for (trueSectionPath, sectionPathName, paragraph) in paras:
-                sectionName = ' '.join(sectionpaths[trueSectionPath])
-                negatives = [cleanParagraphText(p.get_text()) for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
-                randomparas = [cleanParagraphText(p.get_text()) for p in random_paras.get_k(4, paras_in_this_page) ]
-                if len(negatives) >= 4:
-                    random.shuffle(negatives)
-                    train_writer.write("\t".join([ queryTokenize(sectionName)
-                                    , cleanParagraphText(paragraph.get_text())
-                                    ]+negatives[0:4]+randomparas) + "\n")
+            if train_writer is not None:
+                # train data
+                for (trueSectionPath, sectionPathName, paragraph) in paras:
+                    sectionName = ' '.join(sectionpaths[trueSectionPath])
+                    negatives = [cleanParagraphText(p.get_text()) for (sectionpath_, sectionnames_, p) in paras if sectionpath_ != trueSectionPath ]
+                    randomparas = [cleanParagraphText(p.get_text()) for p in random_paras.get_k(4, paras_in_this_page) ]
+                    if len(negatives) >= 4:
+                        random.shuffle(negatives)
+                        train_writer.write("\t".join([ queryTokenize(sectionName)
+                                        , cleanParagraphText(paragraph.get_text())
+                                        ]+negatives[0:4]+randomparas) + "\n")
 
             # test data
             random.shuffle(paras)
 
-            randomparas = list(random_paras.get_k(4, paras_in_this_page))  # paragraphs from other pages
-            for sectionPath in sectionpaths:
-                sectionName = ' '.join(sectionpaths[sectionPath])
-                sectionId =  '/'.join(sectionPath)
-                queryTokenized = queryTokenize(sectionName)
+            if test_writer is not None:
+                randomparas = list(random_paras.get_k(4, paras_in_this_page))  # paragraphs from other pages
+                for sectionPath in sectionpaths:
+                    sectionName = ' '.join(sectionpaths[sectionPath])
+                    sectionId =  '/'.join(sectionPath)
+                    queryTokenized = queryTokenize(sectionName)
 
-                for (trueSectionPath, tsn, paragraph) in paras:
-                    test_writer.write("\t".join([sectionId
-                                    , queryTokenized
-                                    , paragraph.para_id
-                                    , cleanParagraphText(paragraph.get_text())
-                                    , str(1) if trueSectionPath == sectionPath else str(0)
-                                    ])+"\n")
+                    for (trueSectionPath, tsn, paragraph) in paras:
+                        test_writer.write("\t".join([sectionId
+                                        , queryTokenized
+                                        , paragraph.para_id
+                                        , cleanParagraphText(paragraph.get_text())
+                                        , str(1) if trueSectionPath == sectionPath else str(0)
+                                        ])+"\n")
 
-                for paragraph in randomparas:
-                    test_writer.write("\t".join([sectionId
-                                    , queryTokenized
-                                    , paragraph.para_id
-                                    , cleanParagraphText(paragraph.get_text())
-                                    , str(0)
-                                    ])+"\n")
-    train_writer.close()
-    test_writer.close()
+                    for paragraph in randomparas:
+                        test_writer.write("\t".join([sectionId
+                                        , queryTokenized
+                                        , paragraph.para_id
+                                        , cleanParagraphText(paragraph.get_text())
+                                        , str(0)
+                                        ])+"\n")
+    if train_writer is not None: train_writer.close()
+    if test_writer is not None: test_writer.close()
 
 description = """
 Glue code for TREC CAR and the Duet Model
@@ -128,8 +130,8 @@ def main():
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('query_cbor', type=argparse.FileType('rb'), help='Input articles cbor file')
     parser.add_argument('paragraph_cbor', type=argparse.FileType('rb'), help='Input paragraphs cbor file data')
-    parser.add_argument('train', type=argparse.FileType('w'), help='Output path for training data')
-    parser.add_argument('test', type=argparse.FileType('w'), help='Output path for test data')
+    parser.add_argument('--train', type=argparse.FileType('w'), help='Output path for training data')
+    parser.add_argument('--test', type=argparse.FileType('w'), help='Output path for test data')
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     args = parser.parse_args()
 

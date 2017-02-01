@@ -7,12 +7,14 @@ set -e
 # python setup.py install
 # bash run.sh
 
-#dataset="spritzer"
-#subset="spritzer"
+echo "requires python 3.5"
+
+dataset="spritzer"
+subset="spritzer"
 
 
-dataset="release"
-subset="release-v1.4/fold0.train"
+#dataset="release"
+#subset="release-v1.4/fold0.train"
 
 version="1.4"
 qrels="${subset}.cbor.hierarchical.qrels"
@@ -26,7 +28,7 @@ fi
 
 
 echo "preparing data"
-wikistein-create data/${subset}.cbor data/${subset}.cbor.paragraphs data/${subset}.train data/${subset}.test
+wikistein-create data/${subset}.cbor --train=data/${subset}.cbor.paragraphs --test=data/${subset}.train data/${subset}.test
 
 
 
