@@ -46,7 +46,7 @@ def cleanParagraphText(text:str):
     # return text.replace("[^A-Za-z01-9\.,;?\(\)-\/]"," ").replace("\n","").replace("[\s]+"," ")
 
 
-def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max_entries = None):
+def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max_entries = None, rel = False):
 
     class RandomParas():
         def __init__(self, paragraph_reader):
@@ -96,6 +96,7 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
             # test data
             random.shuffle(paras)
 
+            relinfo=""
             if test_writer is not None:
                 randomparas = list(random_paras.get_k(4, paras_in_this_page))  # paragraphs from other pages
                 for sectionPath in sectionpaths:
@@ -104,19 +105,23 @@ def write_output(query_reader,  paragraph_reader, train_writer, test_writer, max
                     queryTokenized = queryTokenize(sectionName)
 
                     for (trueSectionPath, tsn, paragraph) in paras:
+                        if rel:
+                            relinfo = str(1) if trueSectionPath == sectionPath else str(0)
                         test_writer.write("\t".join([sectionId
                                         , queryTokenized
                                         , paragraph.para_id
                                         , cleanParagraphText(paragraph.get_text())
-                                        , str(1) if trueSectionPath == sectionPath else str(0)
+                                        , relinfo
                                         ])+"\n")
 
                     for paragraph in randomparas:
+                        if rel:
+                            relinfo=str(0)
                         test_writer.write("\t".join([sectionId
                                         , queryTokenized
                                         , paragraph.para_id
                                         , cleanParagraphText(paragraph.get_text())
-                                        , str(0)
+                                        , relinfo
                                         ])+"\n")
     if train_writer is not None: train_writer.close()
     if test_writer is not None: test_writer.close()
@@ -133,10 +138,11 @@ def main():
     parser.add_argument('--train', type=argparse.FileType('w'), help='Output path for training data')
     parser.add_argument('--test', type=argparse.FileType('w'), help='Output path for test data')
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
+    parser.add_argument('--rel', type=bool, help='if true output relevance info in test')
     args = parser.parse_args()
 
     print("loading queries from ", args.query_cbor.name)
-    write_output(args.query_cbor, args.paragraph_cbor, args.train, args.test, args.maxentries)
+    write_output(args.query_cbor, args.paragraph_cbor, args.train, args.test, args.maxentries, args.rel)
 
 if __name__ == '__main__':
     main()

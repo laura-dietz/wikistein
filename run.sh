@@ -28,7 +28,7 @@ fi
 
 
 echo "preparing data"
-wikistein-create data/${subset}.cbor --train=data/${subset}.cbor.paragraphs --test=data/${subset}.train data/${subset}.test
+wikistein-create data/${subset}.cbor data/${subset}.cbor.paragraphs --train=data/${subset}.train --test=data/${subset}.test  --rel=True
 
 
 
