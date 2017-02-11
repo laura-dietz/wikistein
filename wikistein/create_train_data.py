@@ -141,6 +141,9 @@ def main():
     parser.add_argument('--rel', type=bool, help='if true output relevance info in test')
     args = parser.parse_args()
 
+
+
+    random.seed(0)
     print("loading queries from ", args.query_cbor.name)
     write_output(args.query_cbor, args.paragraph_cbor, args.train, args.test, args.maxentries, args.rel)
 

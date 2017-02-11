@@ -41,7 +41,7 @@ def chunk_by(data:Iterator[Elem], key):
 
 def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
-    testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
+    testedata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         # print("mock ranking:", key)
         elems = list(elems_)
@@ -60,6 +60,7 @@ def main():
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     args = parser.parse_args()
 
+    random.seed(0)
     write_mock_rankings (args.test, args.run, args.maxentries)
 
 
