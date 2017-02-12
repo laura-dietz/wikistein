@@ -48,7 +48,7 @@ def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, Lis
     for key, elems_ in testdata:
         # print("mock ranking:", key)
         # elems = list(elems_)  # needs workaround to kill dupes
-        elems = list(({elem.paraId:elem for elem in elems}).values())
+        elems = list(({elem.paraId:elem for elem in elems_}).values())
         random.shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
             line = columndelim.join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
