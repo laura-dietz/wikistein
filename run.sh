@@ -35,7 +35,7 @@ fi
 
 
 echo "preparing data"
-wikistein-create data/${subset}.cbor data/${subset}.cbor.paragraphs --train=data/${subset}.train --test=data/${subset}.test --relevance
+wikistein-create data/${subset}.cbor data/${subset}.cbor.paragraphs --train=data/${subset}.train --test=data/${subset}.test --relevance --segmentpath
 
 
 
