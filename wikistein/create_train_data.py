@@ -139,6 +139,7 @@ def main():
     parser.add_argument('--test', type=argparse.FileType('w'), help='Output path for test data')
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     parser.add_argument('--relevance', help='if given, relevance info in written to test', action='store_true', default=False)
+    parser.add_argument('--relevance', help='if given, relevance info in written to test', action='store_true', default=False)
     args = parser.parse_args()
 
 
