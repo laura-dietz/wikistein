@@ -1,5 +1,6 @@
-from random import shuffle
 from typing import Iterator
+import random
+random.seed(0)
 
 import itertools
 
@@ -20,7 +21,8 @@ def parse_test(line:str) -> Elem:
     query = splits[1]
     paraId = splits[2]
     paraText = splits[3]
-    rel = int(splits[4])
+    # rel = int(splits[4])
+    rel=0
     return Elem(sectionId, query, paraId, paraText, rel)
 
 
@@ -41,11 +43,11 @@ def chunk_by(data:Iterator[Elem], key):
 
 def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
-    testedata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
+    testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         # print("mock ranking:", key)
         elems = list(set(elems_))
-        shuffle(elems)
+        random.shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
             line = columndelim.join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
             runwriter.write(line + "\n")
@@ -60,7 +62,6 @@ def main():
     parser.add_argument('--maxentries', type=int, help='max number of articles to include')
     args = parser.parse_args()
 
-    random.seed(0)
     write_mock_rankings (args.test, args.run, args.maxentries)
 
 
