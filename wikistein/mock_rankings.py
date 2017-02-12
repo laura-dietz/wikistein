@@ -41,12 +41,14 @@ def chunk_by(data:Iterator[Elem], key):
             chunk.append(elem)
     yield (metakey, chunk)
 
+
 def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, List[Elem]]:
     testdata = (parse_test(line) for line in itertools.islice(testFile, 0, maxentries))
     testdata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         # print("mock ranking:", key)
-        elems = list(set(elems_))
+        # elems = list(elems_)  # needs workaround to kill dupes
+        elems = list(({elem.paraId:elem for elem in elems}).values())
         random.shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
             line = columndelim.join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
