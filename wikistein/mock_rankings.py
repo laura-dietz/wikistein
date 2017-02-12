@@ -44,7 +44,7 @@ def write_mock_rankings(testFile, runwriter, maxentries=None):# -> Dict[str, Lis
     testedata = itertools.groupby(testdata, key=lambda elem: elem.sectionId)
     for key, elems_ in testdata:
         # print("mock ranking:", key)
-        elems = list(elems_)
+        elems = list(set(elems_))
         shuffle(elems)
         for elem, rank in zip(elems, range(1,len(elems))):
             line = columndelim.join([elem.sectionId, "Q0", elem.paraId, str(rank), str(1.0/rank), "mock"])
