@@ -57,7 +57,7 @@ def parse_rankelem(line:str) -> RankElem:
     return RankElem(splits[0], splits[2], rank, float(splits[4]), "")
 
 def addTruth(qrels:QrelCollection, elem:RankElem)-> WithTruth :
-    is_truth = qrels.get(elem.sectionId, False).get(elem.paraId, False)
+    is_truth = qrels.get(elem.sectionId, {}).get(elem.paraId, False)
     return WithTruth(elem, is_truth)
 
 
@@ -72,15 +72,15 @@ class Eval():
         self.aveprec = aveprec
 
     def __str__(self, *args, **kwargs):
-        return  "Eval(mrr="+str(self.mrr)+", p@5="+str(self.p5)+", r-prec"+str(self.rprec)+", map="+str(self.aveprec)+")"
+        return  "Eval(mrr="+str(self.mrr)+", p@5="+str(self.p5)+", r-prec="+str(self.rprec)+", map="+str(self.aveprec)+")"
 
 
 def average_eval(evals: List[Eval], numQueries:int)->Eval:
     norm = 1.0/numQueries
-    return Eval(mrr = norm*sum([e.mrr for e in evals])
-            ,   p5 = norm*sum([e.p5 for e in evals])
-            ,   rprec = norm*sum([e.rprec for e in evals])
-            ,   aveprec = norm*sum([e.aveprec for e in evals])
+    return Eval(mrr = norm*sum([e.mrr for e in evals if e is not None])
+            ,   p5 = norm*sum([e.p5 for e in evals if e is not None])
+            ,   rprec = norm*sum([e.rprec for e in evals if e is not None])
+            ,   aveprec = norm*sum([e.aveprec for e in evals if e is not None])
             )
 
 # ==============================
@@ -129,7 +129,10 @@ def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, Lis
     def eval(sectionId, ranking:List[WithTruth])->Eval:
         ranking = list(ranking) # turn iterator into a list
         num_truths = numTruths(sectionId)
-        return Eval(aveprec = aveprec(ranking, num_truths=num_truths),
+        if num_truths < 1:
+            return None
+        else:
+            return Eval(aveprec = aveprec(ranking, num_truths=num_truths),
                     mrr = mrr(ranking),
                     rprec = r_precision(ranking, num_truths=num_truths),
                     p5 = p5(ranking))
