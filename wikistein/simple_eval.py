@@ -129,6 +129,9 @@ def load_rankings_and_compute_eval(qrelcollection, runreader):# -> Dict[str, Lis
     def eval(sectionId, ranking:List[WithTruth])->Eval:
         ranking = list(ranking) # turn iterator into a list
         ranking = sorted(ranking, key=lambda elem: -elem.elem.score)
+        ranking = [WithTruth(RankElem(elem.elem.sectionId, elem.elem.paraId, r+1, elem.elem.score, elem.elem.exp_name), elem.is_truth) for r,elem in enumerate(ranking)]
+        #     def __init__(self, sectionId, paraId, rank:int, score:float, exp_name):
+
         num_truths = numTruths(sectionId)
         if num_truths < 1:
             return None
