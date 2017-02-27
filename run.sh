@@ -10,14 +10,14 @@ set -e
 echo "requires python 3.5"
 
 
-dataset="spritzer"
-subset="spritzer"
+#dataset="spritzer"
+#subset="spritzer"
 
 #dataset="release"
 #subset="release-v1.4/fold0.train"
 
-#dataset="test200"
-#subset="test200set/all.test200"
+dataset="test200"
+subset="test200set/all.test200"
 
 version="1.4"
 qrels="${subset}.cbor.hierarchical.qrels"
